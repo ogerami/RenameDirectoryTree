@@ -36,15 +36,19 @@ namespace RenameSubFolderAndFiles
             var subdirectoryEntries = Directory.GetDirectories(arguementsModel.Path);
             foreach (var subdirectory in subdirectoryEntries)
             {
+                var directory = subdirectory;
                 if (subdirectory.Contains(arguementsModel.ChangeFrom))
                 {
-                    Directory.Move(subdirectory, subdirectory.Replace(arguementsModel.ChangeFrom, arguementsModel.ChangeTo));
+                    directory = subdirectory.Replace(Path.GetFileName(subdirectory),
+                        Path.GetFileName(subdirectory).Replace(arguementsModel.ChangeFrom, arguementsModel.ChangeTo));
+
+                    Directory.Move(subdirectory, directory);
                     Console.WriteLine("Processed directory '{0}' To: {1}.", subdirectory, subdirectory.Replace(arguementsModel.ChangeFrom, arguementsModel.ChangeTo));
                 }
                     
                 ProcessDirectory(new ArguementsModel
                 {
-                    Path = subdirectory,
+                    Path = directory,
                     ChangeFrom = arguementsModel.ChangeFrom,
                     ChangeTo = arguementsModel.ChangeTo
                 });
@@ -55,8 +59,8 @@ namespace RenameSubFolderAndFiles
         public static void ProcessFile(ArguementsModel arguementsModel)
         {
             if (!arguementsModel.Path.Contains(arguementsModel.ChangeFrom)) return;
-
-            File.Move(arguementsModel.Path, arguementsModel.Path.Replace(arguementsModel.ChangeFrom, arguementsModel.ChangeTo));
+            
+            Directory.Move(arguementsModel.Path, arguementsModel.Path.Replace(Path.GetFileName(arguementsModel.Path), Path.GetFileName(arguementsModel.Path).Replace(arguementsModel.ChangeFrom, arguementsModel.ChangeTo)));
             Console.WriteLine("Processed file '{0}' To: {1}.", arguementsModel.Path, arguementsModel.Path.Replace(arguementsModel.ChangeFrom, arguementsModel.ChangeTo));
         }
     }
